@@ -26,7 +26,12 @@ if (usingSecretKeyInFrontend) {
   console.error("Configuración inválida: estás usando sb_secret en frontend. Usa ANON o PUBLISHABLE.");
 }
 
-export const supabase = createClient(supabaseUrl || "", supabasePublicKey || "");
+// Avoid runtime crash when env vars are missing in hosted environments.
+// Real operations are still protected by ensureSupabaseConfigured().
+export const supabase = createClient(
+  supabaseUrl || "https://placeholder.supabase.co",
+  supabasePublicKey || "placeholder-anon-key"
+);
 
 export const ensureSupabaseConfigured = () => {
   if (!supabaseUrl || !supabasePublicKey) {

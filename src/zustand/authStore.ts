@@ -17,7 +17,7 @@ export const useAuthStore = create<AuthState>()(
             username: null,
             role: null,
             login: (username, password) => {
-                const valid = username === "admin" && password === "admin1234";
+                const valid = username === "admin" && password === "admin290426";
                 if (valid) {
                     set({ username: "admin", role: "admin" });
                     return true;
