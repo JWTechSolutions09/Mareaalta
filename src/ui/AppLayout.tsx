@@ -3,10 +3,19 @@ import { Outlet, NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useCartStore } from "../zustand/cartStore";
 import { Logo } from "./Logo";
+import { useInventoryStore } from "../zustand/inventoryStore";
+import { useSiteAssetsStore } from "../zustand/siteAssetsStore";
 
 export const AppLayout: React.FC = () => {
   const cartCount = useCartStore((s) => s.totalItems);
   const [open, setOpen] = React.useState(false);
+  const fetchProducts = useInventoryStore((s) => s.fetchProducts);
+  const fetchAssets = useSiteAssetsStore((s) => s.fetchAssets);
+
+  React.useEffect(() => {
+    void fetchProducts().catch(() => undefined);
+    void fetchAssets().catch(() => undefined);
+  }, [fetchProducts, fetchAssets]);
 
   return (
     <div className="min-h-dvh bg-[var(--ma-white)] text-[var(--ma-text)]">

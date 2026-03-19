@@ -4,6 +4,10 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 export const AdminAnalytics: React.FC = () => {
     const products = useInventoryStore((s) => s.products);
+    const fetchProducts = useInventoryStore((s) => s.fetchProducts);
+    React.useEffect(() => {
+        void fetchProducts().catch(() => undefined);
+    }, [fetchProducts]);
     const lowStock = products.filter((p) => p.stock <= 2);
     const data = products.map((p) => ({ name: p.name, value: p.stock }));
     const COLORS = ["#111111", "#f6b8d1", "#ee94b9", "#e172a1", "#d1558e"];

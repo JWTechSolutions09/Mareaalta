@@ -23,11 +23,12 @@ export const CheckoutPage: React.FC = () => {
     setForm((f) => ({ ...f, [name]: value }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.name || !form.phone) {
       alert("Por favor completa tu nombre y teléfono.");
       return;
     }
+    try {
     const normalizedItems = items.map((i) => ({
       productId: i.product.id,
       name: i.product.name,
@@ -35,7 +36,7 @@ export const CheckoutPage: React.FC = () => {
       quantity: i.quantity,
     }));
 
-    addOrder({
+    await addOrder({
       customer: {
         name: form.name,
         phone: form.phone,
@@ -68,6 +69,9 @@ export const CheckoutPage: React.FC = () => {
     localStorage.setItem("ma-last-order", JSON.stringify({ form, items, total, createdAt: new Date().toISOString() }));
     clear();
     window.location.href = url;
+    } catch {
+      alert("No se pudo registrar el pedido en este momento. Verifica la configuración de Supabase.");
+    }
   };
 
   if (items.length === 0) {

@@ -3,7 +3,10 @@ import { motion } from "framer-motion";
 import { useOrdersStore, type OrderStatus } from "../../zustand/ordersStore";
 
 export const AdminOrders: React.FC = () => {
-    const { orders, updateStatus } = useOrdersStore();
+    const { orders, updateStatus, fetchOrders } = useOrdersStore();
+    React.useEffect(() => {
+        void fetchOrders().catch(() => undefined);
+    }, [fetchOrders]);
     const statusMap: Record<OrderStatus, string> = {
         "en-curso": "En curso",
         cancelado: "Cancelado",
@@ -30,7 +33,7 @@ export const AdminOrders: React.FC = () => {
                             <select
                                 className="text-sm rounded-full px-3 py-1 border bg-[var(--ma-pink-50)]"
                                 value={o.status}
-                                onChange={(e) => updateStatus(o.id, e.target.value as OrderStatus)}
+                                onChange={(e) => { void updateStatus(o.id, e.target.value as OrderStatus); }}
                             >
                                 <option value="en-curso">{statusMap["en-curso"]}</option>
                                 <option value="cancelado">{statusMap.cancelado}</option>

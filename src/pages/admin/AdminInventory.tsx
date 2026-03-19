@@ -4,7 +4,7 @@ import type { Product } from "../../data/products";
 import { motion } from "framer-motion";
 
 export const AdminInventory: React.FC = () => {
-    const { products, updateProduct, addProduct, deleteProduct } = useInventoryStore();
+    const { products, updateProduct, addProduct, deleteProduct, uploadProductImage, fetchProducts } = useInventoryStore();
     const [viewMode, setViewMode] = useState<"cards" | "list">("cards");
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
@@ -17,19 +17,21 @@ export const AdminInventory: React.FC = () => {
 
     const onImageUpload = (productId: string, file?: File | null) => {
         if (!file) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-            updateProduct(productId, { image: String(reader.result) });
-        };
-        reader.readAsDataURL(file);
+        void uploadProductImage(file)
+            .then((url) => updateProduct(productId, { image: url }))
+            .catch(() => undefined);
     };
 
     const onNewImageUpload = (file?: File | null) => {
         if (!file) return;
-        const reader = new FileReader();
-        reader.onload = () => setImage(String(reader.result));
-        reader.readAsDataURL(file);
+        void uploadProductImage(file)
+            .then((url) => setImage(url))
+            .catch(() => undefined);
     };
+
+    React.useEffect(() => {
+        void fetchProducts().catch(() => undefined);
+    }, [fetchProducts]);
 
     const handleAdd = () => {
         if (!name || !category) return;
@@ -48,7 +50,7 @@ export const AdminInventory: React.FC = () => {
             available,
             featured,
         };
-        addProduct(newProduct);
+        void addProduct(newProduct);
         setName("");
         setPrice("");
         setStock("");
@@ -104,12 +106,12 @@ export const AdminInventory: React.FC = () => {
                             </button>
                         </div>
                         <div className="grid md:grid-cols-2 gap-2">
-                            <input className="rounded border px-2 py-2 text-sm" value={p.name} onChange={(e) => updateProduct(p.id, { name: e.target.value })} />
-                            <input className="rounded border px-2 py-2 text-sm" value={p.category} onChange={(e) => updateProduct(p.id, { category: e.target.value })} />
-                            <input type="number" className="rounded border px-2 py-2 text-sm" value={p.price} onChange={(e) => updateProduct(p.id, { price: Number(e.target.value) })} />
-                            <input type="number" className="rounded border px-2 py-2 text-sm" value={p.stock} onChange={(e) => updateProduct(p.id, { stock: Math.max(0, Number(e.target.value)) })} />
-                            <textarea className="md:col-span-2 rounded border px-2 py-2 text-sm h-20 resize-none" value={p.description || ""} onChange={(e) => updateProduct(p.id, { description: e.target.value })} />
-                            <input className="md:col-span-2 rounded border px-2 py-2 text-sm" placeholder="URL imagen (opcional)" value={p.image || ""} onChange={(e) => updateProduct(p.id, { image: e.target.value })} />
+                            <input className="rounded border px-2 py-2 text-sm" value={p.name} onChange={(e) => { void updateProduct(p.id, { name: e.target.value }); }} />
+                            <input className="rounded border px-2 py-2 text-sm" value={p.category} onChange={(e) => { void updateProduct(p.id, { category: e.target.value }); }} />
+                            <input type="number" className="rounded border px-2 py-2 text-sm" value={p.price} onChange={(e) => { void updateProduct(p.id, { price: Number(e.target.value) }); }} />
+                            <input type="number" className="rounded border px-2 py-2 text-sm" value={p.stock} onChange={(e) => { void updateProduct(p.id, { stock: Math.max(0, Number(e.target.value)) }); }} />
+                            <textarea className="md:col-span-2 rounded border px-2 py-2 text-sm h-20 resize-none" value={p.description || ""} onChange={(e) => { void updateProduct(p.id, { description: e.target.value }); }} />
+                            <input className="md:col-span-2 rounded border px-2 py-2 text-sm" placeholder="URL imagen (opcional)" value={p.image || ""} onChange={(e) => { void updateProduct(p.id, { image: e.target.value }); }} />
                             <label className="col-span-2 inline-flex items-center justify-center gap-2 rounded-lg border border-dashed px-3 py-2 text-sm cursor-pointer hover:bg-[var(--ma-pink-50)] transition">
                                 <span>📷 Elegir archivo</span>
                                 <input type="file" accept="image/*" className="hidden" onChange={(e) => onImageUpload(p.id, e.target.files?.[0])} />
@@ -117,11 +119,11 @@ export const AdminInventory: React.FC = () => {
                         </div>
                         <div className="flex flex-wrap items-center gap-4 text-sm pt-1">
                             <label className="flex items-center gap-2">
-                                <input type="checkbox" checked={p.available !== false} onChange={(e) => updateProduct(p.id, { available: e.target.checked })} />
+                                <input type="checkbox" checked={p.available !== false} onChange={(e) => { void updateProduct(p.id, { available: e.target.checked }); }} />
                                 Mostrar en tienda
                             </label>
                             <label className="flex items-center gap-2">
-                                <input type="checkbox" checked={Boolean(p.featured)} onChange={(e) => updateProduct(p.id, { featured: e.target.checked })} />
+                                <input type="checkbox" checked={Boolean(p.featured)} onChange={(e) => { void updateProduct(p.id, { featured: e.target.checked }); }} />
                                 Destacar en home
                             </label>
                         </div>
@@ -152,16 +154,16 @@ export const AdminInventory: React.FC = () => {
                                             </div>
                                         </td>
                                         <td className="px-3 py-2">
-                                            <input type="number" className="w-24 rounded border px-2 py-1" value={p.price} onChange={(e) => updateProduct(p.id, { price: Number(e.target.value) })} />
+                                            <input type="number" className="w-24 rounded border px-2 py-1" value={p.price} onChange={(e) => { void updateProduct(p.id, { price: Number(e.target.value) }); }} />
                                         </td>
                                         <td className="px-3 py-2">
-                                            <input type="number" className="w-20 rounded border px-2 py-1" value={p.stock} onChange={(e) => updateProduct(p.id, { stock: Math.max(0, Number(e.target.value)) })} />
+                                            <input type="number" className="w-20 rounded border px-2 py-1" value={p.stock} onChange={(e) => { void updateProduct(p.id, { stock: Math.max(0, Number(e.target.value)) }); }} />
                                         </td>
                                         <td className="px-3 py-2">
-                                            <input type="checkbox" checked={p.available !== false} onChange={(e) => updateProduct(p.id, { available: e.target.checked })} />
+                                            <input type="checkbox" checked={p.available !== false} onChange={(e) => { void updateProduct(p.id, { available: e.target.checked }); }} />
                                         </td>
                                         <td className="px-3 py-2">
-                                            <input type="checkbox" checked={Boolean(p.featured)} onChange={(e) => updateProduct(p.id, { featured: e.target.checked })} />
+                                            <input type="checkbox" checked={Boolean(p.featured)} onChange={(e) => { void updateProduct(p.id, { featured: e.target.checked }); }} />
                                         </td>
                                         <td className="px-3 py-2">
                                             <button

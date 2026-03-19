@@ -4,13 +4,15 @@ import { useSiteAssetsStore } from "../../zustand/siteAssetsStore";
 type AssetKey = "heroMainImage" | "aboutImage" | "navbarLogo";
 
 export const AdminAppearance: React.FC = () => {
-  const { heroMainImage, aboutImage, navbarLogo, setAsset, resetDefaults } = useSiteAssetsStore();
+  const { heroMainImage, aboutImage, navbarLogo, setAsset, uploadAsset, resetDefaults, fetchAssets } = useSiteAssetsStore();
+
+  React.useEffect(() => {
+    void fetchAssets().catch(() => undefined);
+  }, [fetchAssets]);
 
   const onUpload = (key: AssetKey, file?: File | null) => {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setAsset(key, String(reader.result));
-    reader.readAsDataURL(file);
+    void uploadAsset(key, file).catch(() => undefined);
   };
 
   const cards: Array<{ key: AssetKey; title: string; value: string }> = [
@@ -44,7 +46,7 @@ export const AdminAppearance: React.FC = () => {
               className="w-full rounded border px-3 py-2 text-sm"
               placeholder="URL de imagen"
               value={c.value}
-              onChange={(e) => setAsset(c.key, e.target.value)}
+              onChange={(e) => { void setAsset(c.key, e.target.value); }}
             />
             <label className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-dashed px-3 py-2 text-sm cursor-pointer hover:bg-[var(--ma-pink-50)] transition">
               <span>📷 Subir desde mi equipo</span>
