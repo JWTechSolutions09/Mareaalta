@@ -14,7 +14,11 @@ export const ProductPage: React.FC = () => {
 
     return (
         <div className="grid md:grid-cols-2 gap-8">
-            <div className="aspect-square w-full rounded-2xl bg-[var(--ma-pink-50)]" />
+            <img
+                src={product.image || "/LogoM.png"}
+                alt={product.name}
+                className="aspect-square w-full rounded-2xl object-cover bg-[var(--ma-pink-50)] border"
+            />
             <div>
                 <h1 className="heading-serif text-3xl text-[var(--ma-black)]">{product.name}</h1>
                 <p className="mt-2 text-neutral-600">{product.description}</p>
