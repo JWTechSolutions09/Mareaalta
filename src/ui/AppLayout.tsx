@@ -55,7 +55,7 @@ export const AppLayout: React.FC = () => {
               <NavLink to="/tienda" onClick={() => setOpen(false)}>Tienda</NavLink>
               <NavLink to="/#sobre" onClick={() => setOpen(false)}>Sobre</NavLink>
               <NavLink to="/contacto" onClick={() => setOpen(false)}>Contacto</NavLink>
-              <NavLink to="/admin" onClick={() => setOpen(false)} className="btn-outline-gold w-fit">Acceder a Admin</NavLink>
+              <NavLink to="/admin" onClick={() => setOpen(false)} className="btn-outline-gold w-fit">Login</NavLink>
             </div>
           </div>
         )}
@@ -66,9 +66,34 @@ export const AppLayout: React.FC = () => {
       <footer className="mt-16 border-t">
         <div className="container-ma py-8 text-sm text-neutral-500 flex flex-col md:flex-row items-center justify-between gap-3">
           <p>© {new Date().getFullYear()} mareaalta</p>
-          <div className="flex items-center gap-4">
-            <a className="hover:text-[var(--ma-pink-500)]" href="https://instagram.com/mareaalta.rd" target="_blank" rel="noreferrer">@mareaalta.rd</a>
-            <a className="hover:text-[var(--ma-pink-500)]" href="https://wa.me/18492016099" target="_blank" rel="noreferrer">WhatsApp: 849-201-6099</a>
+          <div className="flex items-center gap-3">
+            <a
+              className="inline-flex items-center justify-center rounded-full border p-2 hover:border-[var(--ma-pink-300)] hover:bg-[var(--ma-pink-50)] transition"
+              href="https://instagram.com/mareaalta.rd"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Instagram mareaalta.rd"
+              title="Instagram"
+            >
+              <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5" />
+                <circle cx="12" cy="12" r="4.2" />
+                <circle cx="17.6" cy="6.6" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            </a>
+            <a
+              className="inline-flex items-center justify-center rounded-full border p-2 hover:border-[var(--ma-pink-300)] hover:bg-[var(--ma-pink-50)] transition"
+              href="https://wa.me/18492016099"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="WhatsApp 849-201-6099"
+              title="WhatsApp"
+            >
+              <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M20 12a8 8 0 0 1-11.7 7l-4.3 1.1 1.1-4.1A8 8 0 1 1 20 12Z" />
+                <path d="M9.2 8.9c.2-.5.4-.5.7-.5h.5c.2 0 .4 0 .5.3l.8 2c.1.2.1.4 0 .6l-.4.6c-.1.2-.1.3 0 .5.2.3.8 1.2 1.9 1.8.3.2.5.2.7 0l.6-.7c.2-.2.4-.2.6-.1l1.9.9c.2.1.3.2.3.4v.5c0 .4-.2.6-.5.8-.4.2-1.1.4-1.8.2-1.1-.3-2.3-1-3.5-2.1-1.1-1.1-1.8-2.2-2.1-3.3-.2-.7 0-1.5.2-1.9Z" />
+              </svg>
+            </a>
           </div>
         </div>
       </footer>
