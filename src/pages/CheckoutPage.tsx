@@ -1,9 +1,11 @@
 import React, { useMemo, useState } from "react";
 import { useCartStore } from "../zustand/cartStore";
 import { useNavigate } from "react-router-dom";
+import { useOrdersStore } from "../zustand/ordersStore";
 
 export const CheckoutPage: React.FC = () => {
   const { items, clear } = useCartStore();
+  const addOrder = useOrdersStore((s) => s.addOrder);
   const navigate = useNavigate();
   const total = useMemo(() => items.reduce((a, b) => a + b.product.price * b.quantity, 0), [items]);
   const [form, setForm] = useState({
@@ -26,6 +28,27 @@ export const CheckoutPage: React.FC = () => {
       alert("Por favor completa tu nombre y teléfono.");
       return;
     }
+    const normalizedItems = items.map((i) => ({
+      productId: i.product.id,
+      name: i.product.name,
+      price: i.product.price,
+      quantity: i.quantity,
+    }));
+
+    addOrder({
+      customer: {
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        address: form.address,
+        shipping: form.shipping,
+        payment: form.payment,
+        notes: form.notes,
+      },
+      items: normalizedItems,
+      total,
+    });
+
     const lines = [
       `Nuevo pedido - MareaAlta`,
       `Nombre: ${form.name}`,
@@ -36,7 +59,7 @@ export const CheckoutPage: React.FC = () => {
       `Pago: ${form.payment}`,
       form.notes ? `Notas: ${form.notes}` : "",
       `---`,
-      ...items.map(i => `• ${i.product.name} x${i.quantity} - $${(i.product.price * i.quantity).toFixed(2)}`),
+      ...normalizedItems.map(i => `• ${i.name} x${i.quantity} - $${(i.price * i.quantity).toFixed(2)}`),
       `Total: $${total.toFixed(2)}`
     ].filter(Boolean).join("\n");
 

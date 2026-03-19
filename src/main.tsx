@@ -16,6 +16,7 @@ import { AdminInventory } from "./pages/admin/AdminInventory";
 import { AdminRoles } from "./pages/admin/AdminRoles";
 import { RequireRole } from "./security/RequireRole";
 import { CheckoutPage } from "./pages/CheckoutPage";
+import { AdminAppearance } from "./pages/admin/AdminAppearance";
 
 const router = createBrowserRouter([
     {
@@ -72,6 +73,14 @@ const router = createBrowserRouter([
                 element: (
                     <RequireRole roles={['admin']}>
                         <AdminRoles />
+                    </RequireRole>
+                ),
+            },
+            {
+                path: "apariencia",
+                element: (
+                    <RequireRole roles={['admin']}>
+                        <AdminAppearance />
                     </RequireRole>
                 ),
             },

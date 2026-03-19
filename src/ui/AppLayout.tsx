@@ -18,9 +18,9 @@ export const AppLayout: React.FC = () => {
           <nav className="hidden md:flex items-center gap-6 text-sm md:text-base">
             <NavLink to="/" className={({isActive}) => isActive ? "gold-text" : "hover:text-[var(--ma-pink-500)]"}>Home</NavLink>
             <NavLink to="/tienda" className={({isActive}) => isActive ? "gold-text" : "hover:text-[var(--ma-pink-500)]"}>Tienda</NavLink>
-            <NavLink to="/tienda#colecciones" className="hover:text-[var(--ma-pink-500)]">Colecciones</NavLink>
             <NavLink to="/#sobre" className="hover:text-[var(--ma-pink-500)]">Sobre</NavLink>
             <NavLink to="/contacto" className={({isActive}) => isActive ? "gold-text" : "hover:text-[var(--ma-pink-500)]"}>Contacto</NavLink>
+            <NavLink to="/admin" className="btn-outline-gold !px-4 !py-1.5">Login</NavLink>
             <NavLink to="/carrito" className="relative">
               <span>Carrito</span>
               {cartCount > 0 && (
@@ -44,9 +44,9 @@ export const AppLayout: React.FC = () => {
             <div className="container-ma py-3 flex flex-col gap-2 text-sm">
               <NavLink to="/" onClick={() => setOpen(false)}>Home</NavLink>
               <NavLink to="/tienda" onClick={() => setOpen(false)}>Tienda</NavLink>
-              <NavLink to="/tienda#colecciones" onClick={() => setOpen(false)}>Colecciones</NavLink>
               <NavLink to="/#sobre" onClick={() => setOpen(false)}>Sobre</NavLink>
               <NavLink to="/contacto" onClick={() => setOpen(false)}>Contacto</NavLink>
+              <NavLink to="/admin" onClick={() => setOpen(false)} className="btn-outline-gold w-fit">Acceder a Admin</NavLink>
             </div>
           </div>
         )}

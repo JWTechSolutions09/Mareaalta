@@ -23,7 +23,11 @@ export const CartPage: React.FC = () => {
                 <div className="md:col-span-2 space-y-4">
                     {items.map(({ product, quantity }) => (
                         <div key={product.id} className="card p-4 flex items-center gap-4">
-                            <div className="size-16 rounded-lg bg-[var(--ma-pink-50)]" />
+                            <img
+                                src={product.image || "/LogoM.png"}
+                                alt={product.name}
+                                className="size-16 rounded-lg object-cover bg-[var(--ma-pink-50)] border"
+                            />
                             <div className="flex-1">
                                 <p className="font-medium">{product.name}</p>
                                 <p className="text-sm text-neutral-500">${product.price.toFixed(2)}</p>

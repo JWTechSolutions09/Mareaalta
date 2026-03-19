@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import { NavLink } from "react-router-dom";
-import { products } from "../data/products";
+import { useInventoryStore } from "../zustand/inventoryStore";
+import { useSiteAssetsStore } from "../zustand/siteAssetsStore";
+import { useCartStore } from "../zustand/cartStore";
 
 export const LandingPage: React.FC = () => {
+    const allProducts = useInventoryStore((s) => s.products);
+    const heroMainImage = useSiteAssetsStore((s) => s.heroMainImage);
+    const aboutImage = useSiteAssetsStore((s) => s.aboutImage);
+    const addToCart = useCartStore((s) => s.addItem);
+    const featuredProducts = useMemo(
+        () => allProducts.filter((p) => p.featured && p.available !== false).slice(0, 4),
+        [allProducts]
+    );
     return (
         <div className="space-y-16">
             <section className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
@@ -13,8 +23,9 @@ export const LandingPage: React.FC = () => {
                     </h1>
                     <div className="gold-divider mt-3" />
                     <p className="mt-4 text-neutral-600">
-                        En mareaalta, seleccionamos piezas femeninas y atemporales con una paleta
-                        elegante en negro, blanco y rosados pasteles.
+                        En mareaalta encontrarás vestidos, blusas, faldas y sets femeninos seleccionados por su
+                        calidad, estilo y versatilidad. La paleta negro, blanco y rosado pastel corresponde al
+                        diseño visual de nuestra página.
                     </p>
                     <div className="mt-6 flex gap-3">
                         <NavLink to="/tienda" className="btn-primary">Comprar ahora</NavLink>
@@ -24,40 +35,12 @@ export const LandingPage: React.FC = () => {
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
                     <div className="w-full flex items-center justify-center">
                         <img
-                            src="/LogoM.png"
+                            src={heroMainImage || "/LogoM.png"}
                             alt="Marea Alta"
                             className="max-w-full h-auto select-none pointer-events-none rounded-3xl shadow-sm"
                         />
                     </div>
                 </motion.div>
-            </section>
-
-            <section>
-                <h2 className="heading-serif text-2xl md:text-3xl text-[var(--ma-black)] mb-6">Inspiración</h2>
-                <div className="grid md:grid-cols-2 gap-2 md:gap-4 -mx-4 md:-mx-8">
-                    <motion.img
-                        initial={{ opacity: 0, y: 16 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.5 }}
-                        src="/ImagenHome.jpeg"
-                        alt="Look Marea Alta 1"
-                        className="w-full h-[360px] md:h-[520px] object-cover"
-                        loading="lazy"
-                        decoding="async"
-                    />
-                    <motion.img
-                        initial={{ opacity: 0, y: 16 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.6, delay: 0.1 }}
-                        src="/ImagenHome2.jpeg"
-                        alt="Look Marea Alta 2"
-                        className="w-full h-[360px] md:h-[520px] object-cover"
-                        loading="lazy"
-                        decoding="async"
-                    />
-                </div>
             </section>
 
             <section id="colecciones">
@@ -75,11 +58,17 @@ export const LandingPage: React.FC = () => {
                 <div className="mt-8">
                     <h3 className="font-semibold mb-3 gold-text">Productos destacados</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {products.filter(p => p.featured).slice(0, 4).map(p => (
+                        {featuredProducts.map(p => (
                             <div key={p.id} className="card p-3">
                                 <img src={p.image} alt={p.name} className="aspect-square w-full rounded-lg object-cover mb-2" />
                                 <p className="text-sm font-medium">{p.name}</p>
                                 <p className="text-xs text-neutral-500">${p.price.toFixed(2)}</p>
+                                <div className="mt-2 flex gap-2">
+                                    <NavLink to={`/producto/${p.id}`} className="btn-outline !px-3 !py-1.5 text-xs">Ver</NavLink>
+                                    <button className="btn-primary !px-3 !py-1.5 text-xs" onClick={() => addToCart(p, 1)}>
+                                        Agregar
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -114,7 +103,11 @@ export const LandingPage: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="rounded-3xl border h-[300px] md:h-auto bg-gradient-to-br from-[var(--ma-pink-50)] to-white" />
+                    <img
+                        src={aboutImage || "/LogoM.png"}
+                        alt="Imagen sobre Mareaalta"
+                        className="rounded-3xl border h-[300px] md:h-full w-full object-cover"
+                    />
                 </div>
             </section>
 
