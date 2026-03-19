@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+:root {
+  --ma-black: #111111;
+  --ma-white: #ffffff;
+  --ma-pink-50: #fdeff4;
+  --ma-pink-100: #fbd8e6;
+  --ma-pink-200: #f6b8d1;
+  --ma-pink-300: #ee94b9;
+  --ma-pink-400: #e172a1;
+  --ma-pink-500: #d1558e;
+  --ma-text: #2d2a32;
+  /* Gold accents */
+  --ma-gold-300: #e8c877;
+  --ma-gold-400: #ddb85a;
+  --ma-gold-500: #c99c3f;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  scroll-behavior: smooth;
+  margin: 0;
+  color: var(--ma-text);
+  background: var(--ma-white);
+  font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.heading-serif {
+  font-family: "Playfair Display", serif;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-full px-5 py-2 text-sm md:text-base font-semibold text-white shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98];
+  background: linear-gradient(135deg, var(--ma-pink-400), var(--ma-pink-500));
+}
+
+.btn-outline {
+  @apply inline-flex items-center justify-center rounded-full px-5 py-2 text-sm md:text-base font-semibold border transition-colors;
+  border-color: var(--ma-pink-200);
+  color: var(--ma-pink-500);
+}
+
+.btn-outline-gold {
+  @apply inline-flex items-center justify-center rounded-full px-5 py-2 text-sm md:text-base font-semibold border transition-colors;
+  border-color: var(--ma-gold-300);
+  color: var(--ma-gold-500);
+}
+
+.card {
+  @apply rounded-2xl border bg-white shadow-sm transition-shadow;
+  border-color: #f1f1f3;
+}
+
+.container-ma {
+  @apply mx-auto w-full px-4;
+  max-width: 1200px;
+}
+
+/* Golden details */
+.gold-text {
+  background: linear-gradient(135deg, var(--ma-gold-500), var(--ma-gold-300));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gold-divider {
+  height: 2px;
+  width: 120px;
+  background: linear-gradient(90deg, transparent, var(--ma-gold-400), transparent);
+  border-radius: 2px;
+}
