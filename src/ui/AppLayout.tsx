@@ -29,7 +29,7 @@ export const AppLayout: React.FC = () => {
       return;
     }
     const desktop = window.matchMedia("(min-width: 768px)").matches;
-    const offset = desktop ? 120 : 84;
+    const offset = desktop ? 120 : 24;
     // More reliable on mobile browsers than direct window.scrollTo.
     target.scrollIntoView({ behavior: "smooth", block: "start" });
     window.setTimeout(() => {
