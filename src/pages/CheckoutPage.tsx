@@ -13,7 +13,8 @@ export const CheckoutPage: React.FC = () => {
     phone: "",
     email: "",
     address: "",
-    shipping: "pickup", // pickup | local | nacional
+    shippingMethod: "envios",
+    shipping: "santo_domingo", // santo_domingo | nacional
     payment: "transfer", // transfer | cash
     notes: "",
   });
@@ -28,6 +29,9 @@ export const CheckoutPage: React.FC = () => {
       alert("Por favor completa tu nombre y teléfono.");
       return;
     }
+    const shippingLabel =
+      form.shipping === "santo_domingo" ? "Envío en Santo Domingo" : "Envío Nacional (vía paquetería)";
+
     try {
     const normalizedItems = items.map((i) => ({
       productId: i.product.id,
@@ -42,7 +46,7 @@ export const CheckoutPage: React.FC = () => {
         phone: form.phone,
         email: form.email,
         address: form.address,
-        shipping: form.shipping,
+        shipping: shippingLabel,
         payment: form.payment,
         notes: form.notes,
       },
@@ -56,7 +60,7 @@ export const CheckoutPage: React.FC = () => {
       `Teléfono: ${form.phone}`,
       form.email ? `Email: ${form.email}` : "",
       `Dirección: ${form.address || "-"}`,
-      `Envío: ${form.shipping}`,
+      `Envío: ${shippingLabel}`,
       `Pago: ${form.payment}`,
       form.notes ? `Notas: ${form.notes}` : "",
       `---`,
@@ -64,7 +68,7 @@ export const CheckoutPage: React.FC = () => {
       `Total: $${total.toFixed(2)}`
     ].filter(Boolean).join("\n");
 
-    const url = `https://wa.me/18492016099?text=${encodeURIComponent(lines)}`;
+    const url = `https://wa.me/18292605027?text=${encodeURIComponent(lines)}`;
     // Guardado local simple
     localStorage.setItem("ma-last-order", JSON.stringify({ form, items, total, createdAt: new Date().toISOString() }));
     clear();
@@ -91,11 +95,15 @@ export const CheckoutPage: React.FC = () => {
           <input className="rounded border px-3 py-2" placeholder="Nombre completo" name="name" value={form.name} onChange={onChange} />
           <input className="rounded border px-3 py-2" placeholder="Teléfono" name="phone" value={form.phone} onChange={onChange} />
           <input className="rounded border px-3 py-2" placeholder="Email (opcional)" name="email" value={form.email} onChange={onChange} />
-          <select className="rounded border px-3 py-2" name="shipping" value={form.shipping} onChange={onChange}>
-            <option value="pickup">Retiro en tienda</option>
-            <option value="local">Envío local</option>
-            <option value="nacional">Envío nacional</option>
+          <select className="rounded border px-3 py-2" name="shippingMethod" value={form.shippingMethod} onChange={onChange}>
+            <option value="envios">Envíos</option>
           </select>
+          {form.shippingMethod === "envios" && (
+            <select className="rounded border px-3 py-2" name="shipping" value={form.shipping} onChange={onChange}>
+              <option value="santo_domingo">Envío en Santo Domingo</option>
+              <option value="nacional">Envío Nacional (vía paquetería)</option>
+            </select>
+          )}
           <select className="rounded border px-3 py-2" name="payment" value={form.payment} onChange={onChange}>
             <option value="transfer">Transferencia bancaria</option>
             <option value="cash">Efectivo al recibir</option>

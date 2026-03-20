@@ -3,7 +3,8 @@ import { motion } from "framer-motion";
 import { useOrdersStore, type OrderStatus } from "../../zustand/ordersStore";
 
 export const AdminOrders: React.FC = () => {
-    const { orders, updateStatus, fetchOrders } = useOrdersStore();
+    const { orders, updateStatus, fetchOrders, deleteOrder } = useOrdersStore();
+    const [statusFilter, setStatusFilter] = React.useState<"todos" | OrderStatus>("todos");
     React.useEffect(() => {
         void fetchOrders().catch(() => undefined);
     }, [fetchOrders]);
@@ -12,15 +13,32 @@ export const AdminOrders: React.FC = () => {
         cancelado: "Cancelado",
         entregado: "Entregado",
     };
+    const filteredOrders = statusFilter === "todos"
+        ? orders.filter((o) => o.status !== "cancelado")
+        : orders.filter((o) => o.status === statusFilter);
 
     return (
         <div>
             <h2 className="heading-serif text-2xl text-[var(--ma-black)] mb-4">Pedidos</h2>
             <p className="text-sm text-neutral-600 mb-4">Pedidos existentes con datos completos del comprador.</p>
+            <div className="mb-4 flex items-center gap-2">
+                <label htmlFor="status-filter" className="text-sm text-neutral-700">Filtrar por estado:</label>
+                <select
+                    id="status-filter"
+                    className="text-sm rounded-full px-3 py-1 border bg-white"
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value as "todos" | OrderStatus)}
+                >
+                    <option value="todos">Todos</option>
+                    <option value="en-curso">{statusMap["en-curso"]}</option>
+                    <option value="entregado">{statusMap.entregado}</option>
+                    <option value="cancelado">{statusMap.cancelado}</option>
+                </select>
+            </div>
             <div className="space-y-3">
-                {orders.length === 0 ? (
+                {filteredOrders.length === 0 ? (
                     <div className="card p-4 text-sm text-neutral-600">Aún no hay pedidos registrados.</div>
-                ) : orders.map((o, idx) => (
+                ) : filteredOrders.map((o, idx) => (
                     <motion.div
                         key={o.id}
                         initial={{ opacity: 0, y: 10 }}
@@ -39,6 +57,18 @@ export const AdminOrders: React.FC = () => {
                                 <option value="cancelado">{statusMap.cancelado}</option>
                                 <option value="entregado">{statusMap.entregado}</option>
                             </select>
+                            {o.status === "cancelado" && (
+                                <button
+                                    className="text-sm rounded-full px-3 py-1 border border-red-300 text-red-600 hover:bg-red-50"
+                                    onClick={() => {
+                                        const confirmed = window.confirm("¿Eliminar este pedido cancelado?");
+                                        if (!confirmed) return;
+                                        void deleteOrder(o.id);
+                                    }}
+                                >
+                                    Eliminar
+                                </button>
+                            )}
                         </div>
                         <div className="grid md:grid-cols-2 gap-4 mt-3">
                             <div className="text-sm text-neutral-700 space-y-1">

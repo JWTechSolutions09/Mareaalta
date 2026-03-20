@@ -35,6 +35,7 @@ type OrdersState = {
   fetchOrders: () => Promise<void>;
   addOrder: (order: Omit<StoredOrder, "id" | "createdAt" | "status" | "stockApplied">) => Promise<StoredOrder>;
   updateStatus: (id: string, status: OrderStatus) => Promise<void>;
+  deleteOrder: (id: string) => Promise<void>;
 };
 
 const adjustInventoryFromOrder = (
@@ -120,6 +121,18 @@ export const useOrdersStore = create<OrdersState>()(
         .update({ status, stock_applied: nextStockApplied })
         .eq("id", id);
       if (error) throw error;
+    },
+    deleteOrder: async (id) => {
+      ensureSupabaseConfigured();
+      const current = get().orders.find((o) => o.id === id);
+      if (!current || current.status !== "cancelado") return;
+
+      const { error } = await supabase.from("orders").delete().eq("id", id);
+      if (error) throw error;
+
+      set({
+        orders: get().orders.filter((o) => o.id !== id),
+      });
     },
   })
 );

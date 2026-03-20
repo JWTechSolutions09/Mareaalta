@@ -10,10 +10,19 @@ export const LandingPage: React.FC = () => {
     const heroMainImage = useSiteAssetsStore((s) => s.heroMainImage);
     const aboutImage = useSiteAssetsStore((s) => s.aboutImage);
     const addToCart = useCartStore((s) => s.addItem);
+    const [addedProductId, setAddedProductId] = React.useState<string | null>(null);
     const featuredProducts = useMemo(
         () => allProducts.filter((p) => p.featured && p.available !== false).slice(0, 4),
         [allProducts]
     );
+    const handleAddFeatured = (productId: string) => {
+        const product = featuredProducts.find((p) => p.id === productId);
+        if (!product) return;
+        addToCart(product, 1);
+        setAddedProductId(productId);
+        window.setTimeout(() => setAddedProductId(null), 1400);
+    };
+
     return (
         <div className="space-y-16">
             <section className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
@@ -23,9 +32,12 @@ export const LandingPage: React.FC = () => {
                     </h1>
                     <div className="gold-divider mt-3" />
                     <p className="mt-4 text-neutral-600">
-                        En mareaalta encontrarás vestidos, blusas, faldas y sets femeninos seleccionados por su
-                        calidad, estilo y versatilidad. La paleta negro, blanco y rosado pastel corresponde al
-                        diseño visual de nuestra página.
+                        En Marea Alta encontrarás bikinis, trajes de baño, ropa femenina para el verano y todo lo
+                        necesario para la temporada, además de cuidado para la piel y accesorios.
+                        <br />
+                        <br />
+                        Cada producto es seleccionado por su calidad, estilo y versatilidad, para que te sientas
+                        segura, fresca y auténtica.
                     </p>
                     <div className="mt-6 flex gap-3">
                         <NavLink to="/tienda" className="btn-primary">Comprar ahora</NavLink>
@@ -47,7 +59,7 @@ export const LandingPage: React.FC = () => {
                 <h2 className="heading-serif text-2xl md:text-3xl text-[var(--ma-black)] mb-2">Colecciones destacadas</h2>
                 <p className="text-neutral-600 mb-6">Explora nuestras categorías más queridas y los productos destacados del mes.</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {["Vestidos", "Blusas", "Faldas", "Abrigos"].map((c) => (
+                    {["Bikinis", "Trajes de baño", "Ropa femenina", "Cuidado para la piel", "Accesorios"].map((c) => (
                         <div key={c} className="card p-4 text-center hover:shadow-md transition relative">
                             <img src={`/home/${c.toLowerCase()}.jpg`} alt="" className="aspect-square w-full rounded-xl object-cover mb-3" onError={(e: any) => { e.currentTarget.style.display = 'none' }} />
                             <div className="aspect-square rounded-xl bg-[var(--ma-pink-50)] mb-3 hidden" />
@@ -65,8 +77,11 @@ export const LandingPage: React.FC = () => {
                                 <p className="text-xs text-neutral-500">${p.price.toFixed(2)}</p>
                                 <div className="mt-2 flex gap-2">
                                     <NavLink to={`/producto/${p.id}`} className="btn-outline !px-3 !py-1.5 text-xs">Ver</NavLink>
-                                    <button className="btn-primary !px-3 !py-1.5 text-xs" onClick={() => addToCart(p, 1)}>
-                                        Agregar
+                                    <button
+                                        className={`btn-primary !px-3 !py-1.5 text-xs transition-all ${addedProductId === p.id ? "opacity-90" : ""}`}
+                                        onClick={() => handleAddFeatured(p.id)}
+                                    >
+                                        {addedProductId === p.id ? "Agregado" : "Agregar"}
                                     </button>
                                 </div>
                             </div>

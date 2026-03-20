@@ -24,12 +24,12 @@ export const ContactPage: React.FC = () => {
         </a>
         <a
           className="card p-4 hover:shadow-md transition-shadow"
-          href="https://wa.me/18492016099"
+          href="https://wa.me/18292605027"
           target="_blank"
           rel="noreferrer"
         >
           <p className="font-semibold">WhatsApp</p>
-          <p className="text-sm text-neutral-600">849-201-6099</p>
+          <p className="text-sm text-neutral-600">1-829-260-5027</p>
         </a>
       </div>
       <div className="card p-4 space-y-3">
@@ -55,7 +55,7 @@ export const ContactPage: React.FC = () => {
           <button className="btn-primary">Enviar</button>
           <a
             className="btn-outline"
-            href={`https://wa.me/18492016099?text=${encodeURIComponent(`Hola, soy ${name}. ${message}`)}`}
+            href={`https://wa.me/18292605027?text=${encodeURIComponent(`Hola, soy ${name}. ${message}`)}`}
             target="_blank"
             rel="noreferrer"
           >

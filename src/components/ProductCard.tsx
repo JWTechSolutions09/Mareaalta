@@ -10,6 +10,14 @@ type Props = {
 
 export const ProductCard: React.FC<Props> = ({ product }) => {
     const add = useCartStore((s) => s.addItem);
+    const [added, setAdded] = React.useState(false);
+
+    const handleAdd = () => {
+        add(product, 1);
+        setAdded(true);
+        window.setTimeout(() => setAdded(false), 1400);
+    };
+
     return (
         <motion.div layout className="card p-4 hover:border-[var(--ma-gold-300)] transition-colors">
             <NavLink to={`/producto/${product.id}`}>
@@ -30,10 +38,10 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
             <div className="mt-2 flex items-center justify-between">
                 <p className="text-sm text-neutral-600">${product.price.toFixed(2)}</p>
                 <button
-                    className="btn-primary"
-                    onClick={() => add(product, 1)}
+                    className={`btn-primary transition-all ${added ? "opacity-90" : ""}`}
+                    onClick={handleAdd}
                 >
-                    Agregar
+                    {added ? "Agregado" : "Agregar"}
                 </button>
             </div>
         </motion.div>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useCartStore } from "../zustand/cartStore";
 import { Logo } from "./Logo";
@@ -9,13 +9,55 @@ import { useSiteAssetsStore } from "../zustand/siteAssetsStore";
 export const AppLayout: React.FC = () => {
   const cartCount = useCartStore((s) => s.totalItems);
   const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
   const fetchProducts = useInventoryStore((s) => s.fetchProducts);
   const fetchAssets = useSiteAssetsStore((s) => s.fetchAssets);
+  const pendingAboutScrollRef = React.useRef(false);
 
   React.useEffect(() => {
     void fetchProducts().catch(() => undefined);
     void fetchAssets().catch(() => undefined);
   }, [fetchProducts, fetchAssets]);
+
+  const scrollToAbout = React.useCallback((attempt = 0) => {
+    const target = document.getElementById("sobre");
+    if (!target) {
+      if (attempt < 12) {
+        window.setTimeout(() => scrollToAbout(attempt + 1), 90);
+      }
+      return;
+    }
+    const desktop = window.matchMedia("(min-width: 768px)").matches;
+    const offset = desktop ? 120 : 84;
+    // More reliable on mobile browsers than direct window.scrollTo.
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.setTimeout(() => {
+      window.scrollBy({ top: -offset, behavior: "smooth" });
+    }, 220);
+    pendingAboutScrollRef.current = false;
+  }, []);
+
+  React.useEffect(() => {
+    if (location.pathname !== "/") return;
+    if (location.hash === "#sobre" || pendingAboutScrollRef.current) {
+      window.setTimeout(() => scrollToAbout(), 40);
+    }
+  }, [location.pathname, location.hash, scrollToAbout]);
+
+  const goToAboutSection = (closeMenu = false) => {
+    if (closeMenu) setOpen(false);
+    pendingAboutScrollRef.current = true;
+    if (location.pathname === "/") {
+      if (closeMenu) {
+        window.setTimeout(() => scrollToAbout(), 220);
+      } else {
+        scrollToAbout();
+      }
+      return;
+    }
+    navigate({ pathname: "/", hash: "#sobre" });
+  };
 
   return (
     <div className="min-h-dvh bg-[var(--ma-white)] text-[var(--ma-text)]">
@@ -27,7 +69,7 @@ export const AppLayout: React.FC = () => {
           <nav className="hidden md:flex items-center gap-6 text-sm md:text-base">
             <NavLink to="/" className={({isActive}) => isActive ? "gold-text" : "hover:text-[var(--ma-pink-500)]"}>Home</NavLink>
             <NavLink to="/tienda" className={({isActive}) => isActive ? "gold-text" : "hover:text-[var(--ma-pink-500)]"}>Tienda</NavLink>
-            <NavLink to="/#sobre" className="hover:text-[var(--ma-pink-500)]">Sobre</NavLink>
+            <button className="hover:text-[var(--ma-pink-500)]" onClick={() => goToAboutSection()}>Sobre</button>
             <NavLink to="/contacto" className={({isActive}) => isActive ? "gold-text" : "hover:text-[var(--ma-pink-500)]"}>Contacto</NavLink>
             <NavLink to="/admin" className="btn-outline-gold !px-4 !py-1.5">Login</NavLink>
             <NavLink to="/carrito" className="relative">
@@ -53,7 +95,7 @@ export const AppLayout: React.FC = () => {
             <div className="container-ma py-3 flex flex-col gap-2 text-sm">
               <NavLink to="/" onClick={() => setOpen(false)}>Home</NavLink>
               <NavLink to="/tienda" onClick={() => setOpen(false)}>Tienda</NavLink>
-              <NavLink to="/#sobre" onClick={() => setOpen(false)}>Sobre</NavLink>
+              <button className="text-left" onClick={() => goToAboutSection(true)}>Sobre</button>
               <NavLink to="/contacto" onClick={() => setOpen(false)}>Contacto</NavLink>
               <NavLink to="/admin" onClick={() => setOpen(false)} className="btn-outline-gold w-fit">Login</NavLink>
             </div>
@@ -83,10 +125,10 @@ export const AppLayout: React.FC = () => {
             </a>
             <a
               className="inline-flex items-center justify-center rounded-full border p-2 hover:border-[var(--ma-pink-300)] hover:bg-[var(--ma-pink-50)] transition"
-              href="https://wa.me/18492016099"
+              href="https://wa.me/18292605027"
               target="_blank"
               rel="noreferrer"
-              aria-label="WhatsApp 849-201-6099"
+              aria-label="WhatsApp 1-829-260-5027"
               title="WhatsApp"
             >
               <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8">
