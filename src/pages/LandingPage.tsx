@@ -4,6 +4,10 @@ import { NavLink } from "react-router-dom";
 import { useInventoryStore } from "../zustand/inventoryStore";
 import { useSiteAssetsStore } from "../zustand/siteAssetsStore";
 import { useCartStore } from "../zustand/cartStore";
+import { PRODUCT_CATEGORIES } from "../data/products";
+
+/** Categorías mostradas en Colecciones destacadas (mismas que en tienda, sin «Otros»). */
+const COLECCIONES_DESTACADAS = PRODUCT_CATEGORIES.filter((c) => c !== "Otros");
 
 export const LandingPage: React.FC = () => {
     const allProducts = useInventoryStore((s) => s.products);
@@ -59,12 +63,16 @@ export const LandingPage: React.FC = () => {
                 <h2 className="heading-serif text-2xl md:text-3xl text-[var(--ma-black)] mb-2">Colecciones destacadas</h2>
                 <p className="text-neutral-600 mb-6">Explora nuestras categorías más queridas y los productos destacados del mes.</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {["Bikinis", "Trajes de baño", "Ropa femenina", "Cuidado para la piel", "Accesorios"].map((c) => (
-                        <div key={c} className="card p-4 text-center hover:shadow-md transition relative">
+                    {COLECCIONES_DESTACADAS.map((c) => (
+                        <NavLink
+                            key={c}
+                            to={{ pathname: "/tienda", search: `?categoria=${encodeURIComponent(c)}` }}
+                            className="card p-4 text-center hover:shadow-md transition relative block text-[var(--ma-text)] hover:border-[var(--ma-pink-200)]"
+                        >
                             <img src={`/home/${c.toLowerCase()}.jpg`} alt="" className="aspect-square w-full rounded-xl object-cover mb-3" onError={(e: any) => { e.currentTarget.style.display = 'none' }} />
                             <div className="aspect-square rounded-xl bg-[var(--ma-pink-50)] mb-3 hidden" />
                             <p className="font-medium">{c}</p>
-                        </div>
+                        </NavLink>
                     ))}
                 </div>
                 <div className="mt-8">

@@ -1,11 +1,40 @@
 import React, { useState } from "react";
 import { useInventoryStore } from "../../zustand/inventoryStore";
 import type { Product } from "../../data/products";
+import { PRODUCT_CATEGORIES } from "../../data/products";
 import { motion } from "framer-motion";
+
+const isKnownCategory = (c: string) =>
+    (PRODUCT_CATEGORIES as readonly string[]).includes(c);
+
+function CategorySelect({
+    value,
+    onChange,
+}: {
+    value: string;
+    onChange: (next: string) => void;
+}) {
+    const known = Boolean(value) && isKnownCategory(value);
+    const selectValue = known ? value : "";
+
+    return (
+        <select
+            className="w-full min-w-[140px] rounded border px-2 py-2 text-sm bg-white"
+            value={selectValue}
+            onChange={(e) => onChange(e.target.value)}
+        >
+            <option value="">Seleccionar categoría</option>
+            {PRODUCT_CATEGORIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
+            ))}
+        </select>
+    );
+}
 
 export const AdminInventory: React.FC = () => {
     const { products, updateProduct, addProduct, deleteProduct, uploadProductImage, fetchProducts } = useInventoryStore();
     const [viewMode, setViewMode] = useState<"cards" | "list">("cards");
+    const [categoryFilter, setCategoryFilter] = useState<string>("todas");
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
     const [stock, setStock] = useState("");
@@ -32,6 +61,11 @@ export const AdminInventory: React.FC = () => {
     React.useEffect(() => {
         void fetchProducts().catch(() => undefined);
     }, [fetchProducts]);
+
+    const filteredProducts = React.useMemo(() => {
+        if (categoryFilter === "todas") return products;
+        return products.filter((p) => p.category === categoryFilter);
+    }, [products, categoryFilter]);
 
     const handleAdd = () => {
         if (!name || !category) return;
@@ -82,7 +116,25 @@ export const AdminInventory: React.FC = () => {
                     </div>
                 </div>
 
-                {viewMode === "cards" ? products.map((p, idx) => (
+                <div className="flex flex-wrap items-center gap-2">
+                    <label htmlFor="inv-category-filter" className="text-sm text-neutral-600">Filtrar por categoría:</label>
+                    <select
+                        id="inv-category-filter"
+                        className="rounded-full border px-3 py-1.5 text-sm bg-white min-w-[200px]"
+                        value={categoryFilter}
+                        onChange={(e) => setCategoryFilter(e.target.value)}
+                    >
+                        <option value="todas">Todas</option>
+                        {PRODUCT_CATEGORIES.map((c) => (
+                            <option key={c} value={c}>{c}</option>
+                        ))}
+                    </select>
+                    <span className="text-xs text-neutral-500">
+                        {filteredProducts.length} producto{filteredProducts.length === 1 ? "" : "s"}
+                    </span>
+                </div>
+
+                {viewMode === "cards" ? filteredProducts.map((p, idx) => (
                     <motion.div
                         key={p.id}
                         initial={{ opacity: 0, y: 8 }}
@@ -107,7 +159,10 @@ export const AdminInventory: React.FC = () => {
                         </div>
                         <div className="grid md:grid-cols-2 gap-2">
                             <input className="rounded border px-2 py-2 text-sm" value={p.name} onChange={(e) => { void updateProduct(p.id, { name: e.target.value }); }} />
-                            <input className="rounded border px-2 py-2 text-sm" value={p.category} onChange={(e) => { void updateProduct(p.id, { category: e.target.value }); }} />
+                            <CategorySelect
+                                value={p.category}
+                                onChange={(next) => { void updateProduct(p.id, { category: next }); }}
+                            />
                             <input type="number" className="rounded border px-2 py-2 text-sm" value={p.price} onChange={(e) => { void updateProduct(p.id, { price: Number(e.target.value) }); }} />
                             <input type="number" className="rounded border px-2 py-2 text-sm" value={p.stock} onChange={(e) => { void updateProduct(p.id, { stock: Math.max(0, Number(e.target.value)) }); }} />
                             <textarea className="md:col-span-2 rounded border px-2 py-2 text-sm h-20 resize-none" value={p.description || ""} onChange={(e) => { void updateProduct(p.id, { description: e.target.value }); }} />
@@ -134,6 +189,7 @@ export const AdminInventory: React.FC = () => {
                             <thead className="bg-[var(--ma-pink-50)]">
                                 <tr>
                                     <th className="text-left px-3 py-2">Producto</th>
+                                    <th className="text-left px-3 py-2 min-w-[180px]">Categoría</th>
                                     <th className="text-left px-3 py-2">Precio</th>
                                     <th className="text-left px-3 py-2">Stock</th>
                                     <th className="text-left px-3 py-2">Activo</th>
@@ -142,16 +198,21 @@ export const AdminInventory: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {products.map((p) => (
+                                {filteredProducts.map((p) => (
                                     <tr key={p.id} className="border-t">
                                         <td className="px-3 py-2">
                                             <div className="flex items-center gap-2">
                                                 <img src={p.image || "/LogoM.png"} alt={p.name} className="size-10 rounded object-cover" />
                                                 <div>
                                                     <p className="font-medium">{p.name}</p>
-                                                    <p className="text-xs text-neutral-500">{p.category}</p>
                                                 </div>
                                             </div>
+                                        </td>
+                                        <td className="px-3 py-2 align-top">
+                                            <CategorySelect
+                                                value={p.category}
+                                                onChange={(next) => { void updateProduct(p.id, { category: next }); }}
+                                            />
                                         </td>
                                         <td className="px-3 py-2">
                                             <input type="number" className="w-24 rounded border px-2 py-1" value={p.price} onChange={(e) => { void updateProduct(p.id, { price: Number(e.target.value) }); }} />
@@ -194,7 +255,16 @@ export const AdminInventory: React.FC = () => {
                     </div>
                     <div>
                         <label className="mb-1 block text-xs font-medium text-neutral-600">Categoría</label>
-                        <input className="w-full rounded border px-3 py-2" placeholder="Categoría" value={category} onChange={(e) => setCategory(e.target.value)} />
+                        <select
+                            className="w-full rounded border px-3 py-2 bg-white"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                        >
+                            <option value="">Seleccionar categoría</option>
+                            {PRODUCT_CATEGORIES.map((c) => (
+                                <option key={c} value={c}>{c}</option>
+                            ))}
+                        </select>
                     </div>
                     <div>
                         <label className="mb-1 block text-xs font-medium text-neutral-600">Precio</label>

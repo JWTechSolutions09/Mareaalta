@@ -1,3 +1,15 @@
+/** Categorías del inventario / tienda (ortografía unificada). */
+export const PRODUCT_CATEGORIES = [
+    "Bikinis",
+    "Trajes de baño",
+    "Ropa femenina",
+    "Cuidado para la piel",
+    "Accesorios",
+    "Otros",
+] as const;
+
+export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];
+
 export type Product = {
     id: string;
     name: string;
